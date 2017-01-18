@@ -1,10 +1,6 @@
 package bike.pl.bikemap;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -28,14 +24,21 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
 import bike.pl.bikemap.model.Network_;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     public static final String JSON_URL = "http://api.citybik.es/v2/networks";
 
@@ -46,27 +49,24 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //Create map
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
     }
 
     List<Network_> networks = null;
-    private void sendRequest(){
+
+    private void sendRequest() {
 
         JsonObjectRequest stringRequest = new JsonObjectRequest(JSON_URL, null,
                 new Response.Listener<JSONObject>() {
@@ -75,14 +75,14 @@ public class MainActivity extends AppCompatActivity
 
                         networks = parseJSON(response);
                         Toast.makeText(MainActivity.this,
-                                 networks.get(0).getName(),
+                                networks.get(0).getName(),
                                 Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity
 
     private List<Network_> parseJSON(JSONObject json) {
         List<Network_> networks = new ArrayList<>();
-       // Log.i(TAG, "parseJson");
+        // Log.i(TAG, "parseJson");
         try {
             JSONArray jsonArray = json.getJSONArray("networks");
             Type listType = new TypeToken<List<Network_>>() {
@@ -134,6 +134,16 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        // Add a marker in Sydney, Australia,
+        // and move the map's camera to the same location.
+        LatLng sydney = new LatLng(-33.852, 151.211);
+        googleMap.addMarker(new MarkerOptions().position(sydney)
+                .title("Marker in Sydney"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
