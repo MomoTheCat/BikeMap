@@ -1,58 +1,61 @@
 package bike.pl.bikemap.model;
 
 /**
- * Created by eszykle on 2017-01-18.
+ * Created by Kacper on 2017-01-18.
  */
+public class Location
+{
+    private String longitude;
 
-import java.util.HashMap;
-import java.util.Map;
+    private String latitude;
 
-public class Location {
-
-    private Double latitude;
-    private String city;
-    private Double longitude;
     private String country;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    public Double getLatitude() {
-        return latitude;
-    }
+    private String city;
 
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public Double getLongitude() {
+    public String getLongitude ()
+    {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude (String longitude)
+    {
         this.longitude = longitude;
     }
 
-    public String getCountry() {
+    public String getLatitude ()
+    {
+        return latitude;
+    }
+
+    public void setLatitude (String latitude)
+    {
+        this.latitude = latitude;
+    }
+
+    public String getCountry ()
+    {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry (String country)
+    {
         this.country = country;
     }
 
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
+    public String getCity ()
+    {
+        return city;
     }
 
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    public void setCity (String city)
+    {
+        this.city = city;
     }
 
+    @Override
+    public String toString()
+    {
+        return "ClassPojo [longitude = "+longitude+", latitude = "+latitude+", country = "+country+", city = "+city+"]";
+    }
 }
