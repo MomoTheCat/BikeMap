@@ -15,18 +15,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import bike.pl.bikemap.model.Network;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import bike.pl.bikemap.model.Network_;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String JSON_URL = "";
+    public static final String JSON_URL = "http://api.citybik.es/v2/networks";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +58,25 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
             this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    List<Network_> networks = null;
     private void sendRequest(){
 
-        StringRequest stringRequest = new StringRequest(JSON_URL,
-                new Response.Listener<String>() {
+        JsonObjectRequest stringRequest = new JsonObjectRequest(JSON_URL, null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        Log.i("MAIN", response.substring(0, 100));
-                        //showJSON(response);
+                    public void onResponse(JSONObject response) {
+
+                        networks = parseJSON(response);
+                        Toast.makeText(MainActivity.this,
+                                 networks.get(0).getName(),
+                                Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
@@ -75,11 +90,18 @@ public class MainActivity extends AppCompatActivity
         requestQueue.add(stringRequest);
     }
 
-    private void showJSON(String json){
-//        Network pj = new Network(json);
-//        pj.parseJSON();
-//        CustomList cl = new CustomList(this, ParseJSON.ids,ParseJSON.names,ParseJSON.emails);
-//        listView.setAdapter(cl);
+    private List<Network_> parseJSON(JSONObject json) {
+        List<Network_> networks = new ArrayList<>();
+       // Log.i(TAG, "parseJson");
+        try {
+            JSONArray jsonArray = json.getJSONArray("networks");
+            Type listType = new TypeToken<List<Network_>>() {
+            }.getType();
+            networks = new Gson().fromJson(jsonArray.toString(), listType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return networks;
     }
 
     @Override
