@@ -61,6 +61,7 @@ public class ConnectSingleton {
                         networks = parseJSON(response);
                         String text = networks != null ? networks.get(0).getName() : "Can't get a JSON :(";
                         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+                        GMapFragment.updateMap(networks);
                     }
                 },
                 new Response.ErrorListener() {

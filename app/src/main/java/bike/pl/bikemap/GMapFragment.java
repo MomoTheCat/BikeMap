@@ -17,13 +17,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 import bike.pl.bikemap.model.Network;
 
 /**
  * Created by szymon on 19.01.2017.
  */
 
-public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback , GoogleMap.OnMarkerClickListener {
+public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private static GoogleMap mMap;
 
@@ -37,7 +39,6 @@ public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
     }
 
@@ -45,29 +46,27 @@ public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-        // Add a marker in Sydney, Australia,
-        // and move the map's camera to the same location.
         LatLng sydney = new LatLng(-33.852, 151.211);
-
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
     }
 
-    public static void updateMap(){
-        for (int i=0; i<ConnectSingleton.networks.size(); i++){
-            Network.LocationBean loc = ConnectSingleton.networks.get(i).getLocation();
-
+    public static void updateMap(List<Network> nets) {
+        for (Network net : nets) {
             mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
-                    .title("..."));
+                    .position(new LatLng(net.getLocation().getLatitude(), net.getLocation().getLongitude()))
+                    .title(net.getName()));
         }
     }
 
-    /** Called when the user clicks a marker. */
+    public static void updateView(LatLng latLng) {
+        Log.i("MAP", "We can't find a bike without your permission");
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+    }
+
+    /**
+     * Called when the user clicks a marker.
+     */
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
