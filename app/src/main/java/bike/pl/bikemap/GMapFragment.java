@@ -58,13 +58,13 @@ public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     }
 
     public static void updateMap(){
-        for (int i=0; i<ConnectSingleton.networks.size(); i++){
-            Network.LocationBean loc = ConnectSingleton.networks.get(i).getLocation();
-
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
-                    .title("..."));
-        }
+//        for (int i = 0; i< ApiConnector.networks.size(); i++){
+//            Network.LocationBean loc = ApiConnector.networks.get(i).getLocation();
+//
+//            mMap.addMarker(new MarkerOptions()
+//                    .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
+//                    .title("..."));
+//        }
     }
 
     /** Called when the user clicks a marker. */

@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import bike.pl.bikemap.map.MapProcessor;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -82,8 +83,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_send) {
-            ConnectSingleton connect = ConnectSingleton.getInstnce(this);
-            connect.sendRequest();
+
+            MapProcessor mapProcessor = new MapProcessor(this);
+            mapProcessor.prepareMap();
+
             //Wait for data to update markers!
             //GMapFragment.updateMap();
             
