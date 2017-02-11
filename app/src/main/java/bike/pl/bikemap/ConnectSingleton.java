@@ -46,7 +46,6 @@ public class ConnectSingleton {
         this.context = context;
     }
 
-    //Pobranie instancji
     public static ConnectSingleton getInstnce(Context context) {
         return (instance != null ? instance : (instance = new ConnectSingleton(context)));
     }
@@ -60,7 +59,7 @@ public class ConnectSingleton {
                         Log.i("MomoConnect", response.toString());
                         networks = parseJSON(response);
                         String text = networks != null ? networks.get(0).getName() : "Can't get a JSON :(";
-                        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+                       // Toast.makeText(context, text, Toast.LENGTH_LONG).show();
                         GMapFragment.updateMap(networks);
                     }
                 },

@@ -16,7 +16,6 @@ public class Network {
      * gbfs_href : https://gbfs.bayareabikeshare.com/gbfs/gbfs.json
      * license : {"name":"Open Licence","url":"https://developer.jcdecaux.com/#/opendata/licence"}
      */
-
     private String href;
     private String id;
     private LocationBean location;
@@ -29,57 +28,30 @@ public class Network {
         return href;
     }
 
-    public void setHref(String href) {
-        this.href = href;
-    }
-
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public LocationBean getLocation() {
         return location;
     }
 
-    public void setLocation(LocationBean location) {
-        this.location = location;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getGbfs_href() {
         return gbfs_href;
     }
 
-    public void setGbfs_href(String gbfs_href) {
-        this.gbfs_href = gbfs_href;
-    }
-
     public LicenseBean getLicense() {
         return license;
-    }
-
-    public void setLicense(LicenseBean license) {
-        this.license = license;
     }
 
     public List<String> getCompany() {
         return company;
     }
 
-    public void setCompany(List<String> company) {
-        this.company = company;
-    }
 
     public static class LocationBean {
         /**
@@ -98,33 +70,18 @@ public class Network {
             return city;
         }
 
-        public void setCity(String city) {
-            this.city = city;
-        }
-
         public String getCountry() {
             return country;
-        }
-
-        public void setCountry(String country) {
-            this.country = country;
         }
 
         public double getLatitude() {
             return latitude;
         }
 
-        public void setLatitude(double latitude) {
-            this.latitude = latitude;
-        }
-
         public double getLongitude() {
             return longitude;
         }
 
-        public void setLongitude(double longitude) {
-            this.longitude = longitude;
-        }
     }
 
     public static class LicenseBean {
@@ -140,16 +97,8 @@ public class Network {
             return name;
         }
 
-        public void setName(String name) {
-            this.name = name;
-        }
-
         public String getUrl() {
             return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
         }
 
     }
