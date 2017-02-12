@@ -19,7 +19,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import bike.pl.bikemap.map.MapProcessor;
+import bike.pl.bikemap.map.GMapFragment;
+import bike.pl.bikemap.network.MapProcessor;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity
     private void serverRequest() {
         if (isConnectingToInternet(getApplicationContext())) {
             MapProcessor mapProcessor = new MapProcessor(this);
-            mapProcessor.prepareMap();
+            mapProcessor.prepareNetworkMap();
         } else {
             showDialog();
         }
@@ -80,20 +81,20 @@ public class MainActivity extends AppCompatActivity
 
     private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Cannot connect to the Internet")
-                .setMessage("This one's your fault, not ours. Check your settings and retry.")
+        builder.setTitle(R.string.cannot_connect_title)
+                .setMessage(R.string.cannot_connect_message)
                 .setCancelable(false)
-                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (isConnectingToInternet(getApplicationContext())) {
                             MapProcessor mapProcessor = new MapProcessor(getApplicationContext());
-                            mapProcessor.prepareMap();
+                            mapProcessor.prepareNetworkMap();
                         } else {
                             showDialog();
                         }
                     }
                 })
-                .setNegativeButton("Connect", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.connect, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                     }
@@ -138,13 +139,9 @@ public class MainActivity extends AppCompatActivity
 
 
             MapProcessor mapProcessor = new MapProcessor(this);
-            mapProcessor.prepareMap();
+            mapProcessor.prepareNetworkMap();
 
-            //Wait for data to update markers!
-            //GMapFragment.updateMap();
-
-            //// TODO: 19.01.2017 Nalezy pobrac dane i wyslac do MAP
-
+            //GMapFragment.updateMapWithNetworks();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

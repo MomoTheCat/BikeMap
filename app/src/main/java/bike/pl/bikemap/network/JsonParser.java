@@ -1,4 +1,4 @@
-package bike.pl.bikemap.map;
+package bike.pl.bikemap.network;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -10,12 +10,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import bike.pl.bikemap.model.Network;
+import bike.pl.bikemap.model.Stations;
 
 /**
  * Created by Kacper on 2017-01-22.
  */
 public class JsonParser {
-    public static List<Network> networks;
+
     private static ObjectMapper mapper;
 
     static {
@@ -34,5 +35,16 @@ public class JsonParser {
             e.printStackTrace();
         }
         return networks;
+    }
+
+    public static List<Stations> parseStations(JSONObject json) {
+        List<Stations> stations = null;
+        try {
+            stations = Arrays.asList(mapper.readValue(json.getJSONObject("network").toString(),
+                    Stations[].class));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return stations;
     }
 }

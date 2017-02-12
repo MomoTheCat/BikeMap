@@ -1,4 +1,4 @@
-package bike.pl.bikemap;
+package bike.pl.bikemap.map;
 
 import android.Manifest;
 import android.app.Fragment;
@@ -32,22 +32,26 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import bike.pl.bikemap.R;
 import bike.pl.bikemap.model.Network;
+import bike.pl.bikemap.model.Stations;
 
 /**
  * Created by szymon on 19.01.2017.
  */
 
-public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener,
+public class GMapFragment extends Fragment implements
         OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener,
         ActivityCompat.OnRequestPermissionsResultCallback,
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
@@ -58,7 +62,7 @@ public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
     GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
+    static Location mLastLocation;
 
     @Nullable
     @Override
@@ -149,6 +153,8 @@ public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestLocation();
         }
+
+        mMap.setInfoWindowAdapter(new InfoWindows(getActivity()));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -181,54 +187,58 @@ public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         }
     }
 
-
-    public static void updateMap(List<Network> nets) {
+    public static void updateMapWithNetworks(List<Network> nets) {
         for (Network net : nets) {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(net.getLocation().getLatitude(), net.getLocation().getLongitude()))
-                    .title(net.getName()));
+                    .title(net.getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
         }
     }
+
+    public static void updateMapWithStations(List<Stations> stations) {
+        if(stations != null && stations.size() >0){
+            Log.i("GMapFragemnt", stations.get(0).getName());
+            for (Stations.StationsBean station : stations.get(0).getStations()){
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(station.getLatitude(), station.getLongitude()))
+                        .title(station.getName())
+                        .snippet("Free bikes: " + station.getFree_bikes() +
+                        "\nFree slots: " + station.getEmpty_slots()));
+            }
+        }
+    }
+
+    public static String checkNearestStations(List<Network> nets) {
+        float[] results = new float[nets.size()];
+        List<Float> distance = new ArrayList<>();
+        if (mLastLocation != null) {
+            for (Network net : nets) {
+                Location.distanceBetween(
+                        mLastLocation.getLatitude(),
+                        mLastLocation.getLongitude(),
+                        net.getLocation().getLatitude(),
+                        net.getLocation().getLongitude(),
+                        results);
+                distance.add(results[0]);
+            }
+        }
+        int index = distance.indexOf(Collections.min(distance));
+        return nets.get(index).getHref();
+    }
+
 
     public void updateView() {
         if (mLastLocation != null & mMap != null) {
+            LatLng latLng = new LatLng(mLastLocation.getLatitude(),
+                    mLastLocation.getLongitude());
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(mLastLocation.getLatitude(),
-                            mLastLocation.getLongitude())).zoom(12).build();
+                    .target(latLng)
+                    .zoom(16)
+                    .build();
             mMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
         }
-
-    }
-
-    /**
-     * Called when the user clicks a marker.
-     */
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
-
-        // Retrieve the data from the marker.
-        Integer clickCount = (Integer) marker.getTag();
-
-        // Check if a click count was set, then display the click count.
-        if (clickCount != null) {
-            clickCount = clickCount + 1;
-            marker.setTag(clickCount);
-            Toast.makeText(getActivity(),
-                    marker.getTitle() +
-                            " has been clicked " + clickCount + " times.",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        // Return false to indicate that we have not consumed the event and that we wish
-        // for the default behavior to occur (which is for the camera to move such that the
-        // marker is centered and for the marker's info window to open, if it has one).
-        return false;
-    }
-
-    @Override
-    public void onInfoWindowClick(Marker marker) {
-        Log.i("GMapFragment", "Here");
     }
 
     @Override
