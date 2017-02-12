@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import bike.pl.bikemap.R;
 import bike.pl.bikemap.model.Network;
 import bike.pl.bikemap.model.Stations;
@@ -56,6 +58,8 @@ public class GMapFragment extends Fragment implements
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     private final String TAG = this.getClass().getSimpleName();
+
+    @Inject InfoWindows iw;
 
     private static GoogleMap mMap;
     private final int MY_LOCATION_REQUEST_CODE = 90;
@@ -80,6 +84,7 @@ public class GMapFragment extends Fragment implements
                 .addOnConnectionFailedListener(this)
                 .addConnectionCallbacks(this)
                 .build();
+
     }
 
     @Override
