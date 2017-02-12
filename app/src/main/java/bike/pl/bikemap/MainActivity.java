@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import bike.pl.bikemap.map.MapProcessor;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -59,8 +60,8 @@ public class MainActivity extends AppCompatActivity
 
     private void serverRequest() {
         if (isConnectingToInternet(getApplicationContext())) {
-            ConnectSingleton connect = ConnectSingleton.getInstnce(this);
-            connect.sendRequest();
+            MapProcessor mapProcessor = new MapProcessor(this);
+            mapProcessor.prepareMap();
         } else {
             showDialog();
         }
@@ -85,8 +86,8 @@ public class MainActivity extends AppCompatActivity
                 .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (isConnectingToInternet(getApplicationContext())) {
-                            ConnectSingleton connect = ConnectSingleton.getInstnce(getApplicationContext());
-                            connect.sendRequest();
+                            MapProcessor mapProcessor = new MapProcessor(getApplicationContext());
+                            mapProcessor.prepareMap();
                         } else {
                             showDialog();
                         }
@@ -134,8 +135,16 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_send) {
-            ConnectSingleton connect = ConnectSingleton.getInstnce(this);
-            connect.sendRequest();
+
+
+            MapProcessor mapProcessor = new MapProcessor(this);
+            mapProcessor.prepareMap();
+
+            //Wait for data to update markers!
+            //GMapFragment.updateMap();
+
+            //// TODO: 19.01.2017 Nalezy pobrac dane i wyslac do MAP
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

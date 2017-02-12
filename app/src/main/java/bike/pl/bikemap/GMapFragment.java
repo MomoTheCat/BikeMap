@@ -27,7 +27,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -89,8 +88,7 @@ public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         updateView();
     }
 
-    public void settingRequest()
-    {
+    public void settingRequest() {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(30 * 1000);
@@ -192,16 +190,15 @@ public class GMapFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         }
     }
 
-
     public void updateView() {
-        //location is still null
         if (mLastLocation != null & mMap != null) {
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(mLastLocation.getLatitude(),
-                    mLastLocation.getLongitude())).zoom(12).build();
+                            mLastLocation.getLongitude())).zoom(12).build();
             mMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
         }
+
     }
 
     /**
