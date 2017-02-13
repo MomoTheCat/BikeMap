@@ -227,9 +227,10 @@ public class GMapFragment extends Fragment implements
                         results);
                 distance.add(results[0]);
             }
+            int index = distance.indexOf(Collections.min(distance));
+            return nets.get(index).getHref();
         }
-        int index = distance.indexOf(Collections.min(distance));
-        return nets.get(index).getHref();
+       return "";
     }
 
 
