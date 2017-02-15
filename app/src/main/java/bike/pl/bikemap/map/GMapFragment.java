@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -43,6 +42,7 @@ import bike.pl.bikemap.R;
 import bike.pl.bikemap.model.Network;
 import bike.pl.bikemap.model.Stations;
 import bike.pl.bikemap.network.MapProcessor;
+import bike.pl.bikemap.network.MapProcessorImpl;
 
 /**
  * Created by szymon on 19.01.2017.
@@ -159,9 +159,10 @@ public class GMapFragment extends Fragment implements
         if (!isLocationEnabled(getActivity()))
             showLocationDialog();
 
-        String href = checkNearestStations(MapProcessor.networks);
-        if (!("".equals(href)))
-            new MapProcessor(getActivity()).prepareStationsMap(href);
+        String href = checkNearestStations(MapProcessorImpl.networks);
+        if (!("".equals(href))) {
+            new MapProcessorImpl(getActivity()).prepareStationsMap(href);
+        }
     }
 
     public static boolean isLocationEnabled(Context context) {

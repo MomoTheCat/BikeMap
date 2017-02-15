@@ -15,24 +15,19 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 
 import bike.pl.bikemap.map.GMapFragment;
-import bike.pl.bikemap.network.MapProcessor;
+import bike.pl.bikemap.network.MapProcessorImpl;
 
 import static bike.pl.bikemap.R.id.container;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final String TAG = this.getClass().getSimpleName();
     private Boolean exit = false;
 
     @Override
@@ -44,7 +39,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         setupNavigationDrawer(toolbar);
-        setRecyclerView();
 
         getFragmentManager()
                 .beginTransaction()
@@ -63,15 +57,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void setRecyclerView() {
-        View layout = LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
-        RecyclerView recyclerView = (RecyclerView) layout.findViewById(R.id.recycle_view);
-        AdapterView av = AdapterView.newInstance(getApplicationContext());
-        recyclerView.setAdapter(av);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -80,7 +65,7 @@ public class MainActivity extends AppCompatActivity
 
     private void serverRequest() {
         if (isConnectingToInternet(getApplicationContext())) {
-            MapProcessor mapProcessor = new MapProcessor(this);
+            MapProcessorImpl mapProcessor = new MapProcessorImpl(this);
             mapProcessor.prepareNetworkMap();
         } else {
             showNetworkDialog();
@@ -123,16 +108,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
