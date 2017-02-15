@@ -1,7 +1,6 @@
 package bike.pl.bikemap.network;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -11,12 +10,13 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import bike.pl.bikemap.AdapterView;
 import bike.pl.bikemap.model.Network;
 import bike.pl.bikemap.model.Stations;
 
-import static bike.pl.bikemap.map.GMapFragment.checkNearestStations;
 import static bike.pl.bikemap.map.GMapFragment.updateMapWithNetworks;
 import static bike.pl.bikemap.map.GMapFragment.updateMapWithStations;
 
@@ -45,22 +45,16 @@ public class MapProcessor {
     public static final String JSON_URL = "http://api.citybik.es";
     public static final String JSON_URL_NETWORKS_LIST = "/v2/networks";
 
-    private List<Network> networks;
+    public static List<Network> networks = new ArrayList<>();
     private List<Stations> stations;
 
     private void getNetworks() {
-        networks = null;
-
         JsonObjectRequest stringRequest = new JsonObjectRequest(JSON_URL + JSON_URL_NETWORKS_LIST, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.i(TAG, response.toString());
                         networks = JsonParser.parseNetwork(response);
                         updateMapWithNetworks(networks);
-                        String href = checkNearestStations(networks);
-
-                        getStations(href);
                     }
                 },
                 new Response.ErrorListener() {
@@ -75,16 +69,12 @@ public class MapProcessor {
     }
 
     private void getStations(String company) {
-        stations = null;
-
         JsonObjectRequest stringRequest = new JsonObjectRequest(JSON_URL + company, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.i(TAG, response.toString());
                         stations = JsonParser.parseStations(response);
                         updateMapWithStations(stations);
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -100,5 +90,9 @@ public class MapProcessor {
 
     public void prepareNetworkMap() {
         getNetworks();
+    }
+
+    public void prepareStationsMap(String url) {
+        getStations(url);
     }
 }

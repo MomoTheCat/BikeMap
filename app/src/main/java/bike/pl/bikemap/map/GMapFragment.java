@@ -1,17 +1,22 @@
 package bike.pl.bikemap.map;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.IntentSender;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +25,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -35,18 +33,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import bike.pl.bikemap.R;
 import bike.pl.bikemap.model.Network;
 import bike.pl.bikemap.model.Stations;
+import bike.pl.bikemap.network.MapProcessor;
 
 /**
  * Created by szymon on 19.01.2017.
@@ -57,16 +53,11 @@ public class GMapFragment extends Fragment implements
         ActivityCompat.OnRequestPermissionsResultCallback,
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
-    private final String TAG = this.getClass().getSimpleName();
-
-    @Inject InfoWindows iw;
-
     private static GoogleMap mMap;
     private final int MY_LOCATION_REQUEST_CODE = 90;
-    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
     GoogleApiClient mGoogleApiClient;
-    static Location mLastLocation;
+    Location mLastLocation;
 
     @Nullable
     @Override
@@ -84,63 +75,12 @@ public class GMapFragment extends Fragment implements
                 .addOnConnectionFailedListener(this)
                 .addConnectionCallbacks(this)
                 .build();
-
     }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        updateView();
-    }
-
-    public void settingRequest() {
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(30 * 1000);
-        locationRequest.setFastestInterval(5 * 1000);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-        builder.setAlwaysShow(true);
-
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-                        Toast.makeText(getActivity(), "SUCCESS", Toast.LENGTH_SHORT).show();
-                        updateView();
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        try {
-                            status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-
-                        Toast.makeText(getActivity(), "SETTINGS_CHANGE_UNAVAILABLE", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-        });
-    }
-
 
     @Override
     public void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-        settingRequest();
     }
 
     @Override
@@ -152,22 +92,24 @@ public class GMapFragment extends Fragment implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng sydney = new LatLng(52.852, 19.211);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestLocation();
-        }
-
+        requestLocation();
         mMap.setInfoWindowAdapter(new InfoWindows(getActivity()));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+
     public void requestLocation() {
+        Log.d("Szymon", "requestLocation");
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
+            Log.d("Szymon", "mMap.setMyLocationEnabled(true)");
         } else {
+            requestPermission();
+        }
+    }
+
+    private void requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_LOCATION_REQUEST_CODE);
         }
@@ -181,43 +123,88 @@ public class GMapFragment extends Fragment implements
                     try {
                         mMap.setMyLocationEnabled(true);
                         updateView();
+                        Log.i("Szymon", "onRequestPermisssionResult");
+                        obtainLocation();
                     } catch (SecurityException e) {
                         e.getMessage();
                     }
                 } else {
-                    settingRequest();
                     Toast.makeText(getActivity(), R.string.location_denied, Toast.LENGTH_LONG).show();
                 }
                 return;
         }
     }
 
-    public static void updateMapWithNetworks(List<Network> nets) {
-        for (Network net : nets) {
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(net.getLocation().getLatitude(), net.getLocation().getLongitude()))
-                    .title(net.getName())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+    public void showLocationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.cannot_gps_title)
+                .setMessage(R.string.cannot_gps_message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        obtainLocation();
+                    }
+                })
+                .setNegativeButton(R.string.settings, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public void obtainLocation() {
+        Log.i("Szymon", "obtainLocation");
+        if (!isLocationEnabled(getActivity()))
+            showLocationDialog();
+
+        String href = checkNearestStations(MapProcessor.networks);
+        if (!("".equals(href)))
+            new MapProcessor(getActivity()).prepareStationsMap(href);
+    }
+
+    public static boolean isLocationEnabled(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int locationMode;
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(),
+                        Settings.Secure.LOCATION_MODE);
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+        } else {
+            String locationProviders = Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+            return !TextUtils.isEmpty(locationProviders);
         }
     }
 
     public static void updateMapWithStations(List<Stations> stations) {
-        if(stations != null && stations.size() >0){
-            Log.i("GMapFragemnt", stations.get(0).getName());
-            for (Stations.StationsBean station : stations.get(0).getStations()){
+        if (stations != null && stations.size() > 0) {
+            Log.i("Szymon", stations.get(0).getName());
+            for (Stations.StationsBean station : stations.get(0).getStations()) {
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(station.getLatitude(), station.getLongitude()))
                         .title(station.getName())
                         .snippet("Free bikes: " + station.getFree_bikes() +
-                        "\nFree slots: " + station.getEmpty_slots()));
+                                "\nFree slots: " + station.getEmpty_slots()));
             }
         }
     }
 
-    public static String checkNearestStations(List<Network> nets) {
-        float[] results = new float[nets.size()];
-        List<Float> distance = new ArrayList<>();
-        if (mLastLocation != null) {
+    protected String checkNearestStations(List<Network> nets) {
+        if (mLastLocation == null) Log.i("Szymon", "Location is  null");
+        if (nets == null) Log.i("Szymon", "nets is null");
+
+        if (mLastLocation != null && nets != null) {
+            float[] results = new float[nets.size()];
+            List<Float> distance = new ArrayList<>();
+
             for (Network net : nets) {
                 Location.distanceBetween(
                         mLastLocation.getLatitude(),
@@ -227,11 +214,13 @@ public class GMapFragment extends Fragment implements
                         results);
                 distance.add(results[0]);
             }
+            if (distance.size() > 0) {
+                int index = distance.indexOf(Collections.min(distance));
+                return nets.get(index).getHref();
+            }
         }
-        int index = distance.indexOf(Collections.min(distance));
-        return nets.get(index).getHref();
+        return "";
     }
-
 
     public void updateView() {
         if (mLastLocation != null & mMap != null) {
@@ -246,9 +235,29 @@ public class GMapFragment extends Fragment implements
         }
     }
 
+    public static void updateMapWithNetworks(List<Network> nets) {
+        for (Network net : nets) {
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(net.getLocation().getLatitude(), net.getLocation().getLongitude()))
+                    .title(net.getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        updateView();
+        obtainLocation();
+    }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d("Szymon", "onConnectionFailed:" + connectionResult.getErrorCode() + "," + connectionResult.getErrorMessage());
     }
 
     @Override
