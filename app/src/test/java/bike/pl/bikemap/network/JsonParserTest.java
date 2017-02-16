@@ -30,6 +30,7 @@ public class JsonParserTest {
             "href\":\"\\/v2\\/networks\\/wroclawski-rower-miejski\",\"id\":\"wroclawski-rower-miejski\",\"" +
             "location\":{\"city\":\"Wrocław\",\"country\":\"PL\",\"" +
             "latitude\":51.1097,\"longitude\":17.0485},\"name\":\"Rower Miejski\"}]";
+    private static final String STATIONS ="";
 
     @Mock
     JSONObject mockJSONObject;
