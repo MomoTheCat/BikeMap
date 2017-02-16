@@ -102,7 +102,6 @@ public class GMapFragment extends Fragment implements
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
-            Log.d("Szymon", "mMap.setMyLocationEnabled(true)");
         } else {
             requestPermission();
         }
@@ -123,7 +122,6 @@ public class GMapFragment extends Fragment implements
                     try {
                         mMap.setMyLocationEnabled(true);
                         updateView();
-                        Log.i("Szymon", "onRequestPermisssionResult");
                         obtainLocation();
                     } catch (SecurityException e) {
                         e.getMessage();
@@ -155,7 +153,7 @@ public class GMapFragment extends Fragment implements
     }
 
     public void obtainLocation() {
-        Log.i("Szymon", "obtainLocation");
+        Log.d("Szymon", "obtainLocation");
         if (!isLocationEnabled(getActivity()))
             showLocationDialog();
 
