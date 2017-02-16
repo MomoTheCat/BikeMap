@@ -1,15 +1,13 @@
 package bike.pl.bikemap;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import bike.pl.bikemap.model.Stations;
+import bike.pl.bikemap.network.MapProcessor;
 
 /**
  * Created by szymon on 15.02.2017.
@@ -18,49 +16,49 @@ import java.util.List;
 public class AdapterView extends RecyclerView.Adapter<AdapterView.MyViewHolder> {
 
     static AdapterView adapterView;
-    List<String> ls = new ArrayList<>();
-    Context context;
 
-
-    private AdapterView(Context context) {
-        this.context = context;
-        ls.add("SD");
-        ls.add("SsD");
+    private AdapterView() {
     }
 
-    public static AdapterView newInstance(Context context) {
-        if (adapterView == null) {
-            return new AdapterView(context);
-        }
+    public static AdapterView newInstance() {
+        if (adapterView == null)
+            adapterView = new AdapterView();
         return adapterView;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.custom_row, parent, false);
-        Log.d("Szymon", "onCreateViewHolder");
-        return (new MyViewHolder(view));
+        return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Log.d("Szymon", "setText");
-        holder.textView.setText(ls.get(position));
+        if (MapProcessor.stations != null & MapProcessor.stations.size() > 0) {
+            Stations.StationsBean sb = MapProcessor.stations.get(0).getStations().get(position);
+            holder.stationName.setText(sb.getName());
+            holder.bikesAvailability.setText("Bikes: " + sb.getFree_bikes()
+                    + ",  slots: " + sb.getEmpty_slots());
+        }
     }
 
     @Override
     public int getItemCount() {
-        return ls.size();
+        if (MapProcessor.stations != null & MapProcessor.stations.size() > 0)
+            return MapProcessor.stations.get(0).getStations().size();
+        return 0;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textView;
+        TextView stationName;
+        TextView bikesAvailability;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.station_name);
+            stationName = (TextView) itemView.findViewById(R.id.station_name);
+            bikesAvailability = (TextView) itemView.findViewById(R.id.free_bikes);
         }
     }
 }

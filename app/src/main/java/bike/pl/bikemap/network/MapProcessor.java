@@ -46,7 +46,7 @@ public class MapProcessor {
     public static final String JSON_URL_NETWORKS_LIST = "/v2/networks";
 
     public static List<Network> networks = new ArrayList<>();
-    private List<Stations> stations;
+    public static List<Stations> stations = new ArrayList<>();
 
     private void getNetworks() {
         JsonObjectRequest stringRequest = new JsonObjectRequest(JSON_URL + JSON_URL_NETWORKS_LIST, null,
@@ -75,6 +75,8 @@ public class MapProcessor {
                     public void onResponse(JSONObject response) {
                         stations = JsonParser.parseStations(response);
                         updateMapWithStations(stations);
+
+                        AdapterView.newInstance().notifyDataSetChanged();
                     }
                 },
                 new Response.ErrorListener() {

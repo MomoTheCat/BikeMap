@@ -186,7 +186,6 @@ public class GMapFragment extends Fragment implements
 
     public static void updateMapWithStations(List<Stations> stations) {
         if (stations != null && stations.size() > 0) {
-            Log.i("Szymon", stations.get(0).getName());
             for (Stations.StationsBean station : stations.get(0).getStations()) {
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(station.getLatitude(), station.getLongitude()))
@@ -198,8 +197,7 @@ public class GMapFragment extends Fragment implements
     }
 
     protected String checkNearestStations(List<Network> nets) {
-        if (mLastLocation == null) Log.i("Szymon", "Location is  null");
-        if (nets == null) Log.i("Szymon", "nets is null");
+        if (mLastLocation == null) Log.d("Szymon", "Location is  null");
 
         if (mLastLocation != null && nets != null) {
             float[] results = new float[nets.size()];

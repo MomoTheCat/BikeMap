@@ -15,12 +15,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
@@ -29,11 +32,15 @@ import bike.pl.bikemap.network.MapProcessor;
 
 import static bike.pl.bikemap.R.id.container;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
+
+    private final String FIRST_OPEN = "firstOpen";
 
     private final String TAG = this.getClass().getSimpleName();
-    private Boolean exit = false;
+    private boolean exit = false;
+    private boolean firstOpen = true;
+    private DrawerLayout drawer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +50,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setupNavigationDrawer(toolbar);
+        setupNavigationDrawer(toolbar, savedInstanceState);
         setRecyclerView();
 
         getFragmentManager()
@@ -52,24 +59,40 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
-    private void setupNavigationDrawer(Toolbar toolbar) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (firstOpen) {
+            drawer.openDrawer(Gravity.LEFT);
+            firstOpen = false;
+        }
+    }
+
+    private void setupNavigationDrawer(Toolbar toolbar, Bundle savedInstanceState) {
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
-        toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        toggle.syncState();
     }
 
     public void setRecyclerView() {
-        View layout = LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
-        RecyclerView recyclerView = (RecyclerView) layout.findViewById(R.id.recycle_view);
-        AdapterView av = AdapterView.newInstance(getApplicationContext());
-        recyclerView.setAdapter(av);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
 
+        recyclerView.setAdapter(AdapterView.newInstance());
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        LinearLayout ll = (LinearLayout) findViewById(R.id.refresh_layout);
+        ll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().beginTransaction()
+                        .replace(container, new GMapFragment())
+                        .commit();
+            }
+        });
     }
 
     @Override
@@ -116,43 +139,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        FragmentManager fm = getFragmentManager();
-
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            fm.beginTransaction().replace(container, new GMapFragment()).commit();
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -175,6 +161,12 @@ public class MainActivity extends AppCompatActivity
                 }
             }, 3000);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle icicle) {
+        super.onSaveInstanceState(icicle);
+        icicle.putBoolean(FIRST_OPEN, firstOpen);
     }
 
 }
