@@ -2,6 +2,8 @@
 
 Android application showing the nearest bike stations.
 
+![](img/stations_marker.png)
+
 ## License
 
 Copyright 2017, MomoTheCat
@@ -34,7 +36,7 @@ Najważniejszym plikiem który znajduje się w proejkcie jest plik AndroidManife
 Apliakcja jedno Activity (MainActivity zdefiniowane w pliku AndroidManifest.xml), Fragment (GmapFragment) dziłajacy pod Activity, który łaczy się z mapą google oraz GoooleAPI w celu ustalenia ustalenia lokalizacji użytkownika. Stacje rowerowe reprezentowane są przez markery pokazywane na mapie, niebieskie dla firm, by mieć poglad w jakich miejscach na świecie znajduje się ‘rower publiczny’, a czerwone reprezentujace stacje rowerowe, na których można dokonać wypożyczenia roweru.
 
 Komponentami dodatowymi są NavigationDrawer, na którym znajdują się przycisk odświeżenia mapy oraz ToolBar, który ułatwia w otwieraniu NavigationDrower’a.
-Sam NavigationDrawer posiada zaimplementowany RecyclerView, który wygląda jak lista i wyświetla najbliższe stacje rowerowe.
+Sam NavigationDrawer posiada zaimplementowany RecyclerView, który jest zaawansowaną listą która wyświetla stacje rowerowe.
 
 
 #### Wymagania
