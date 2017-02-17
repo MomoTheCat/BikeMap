@@ -2,8 +2,9 @@
 
 Android application showing the nearest bike stations.
 
-<img src="img/networks_markers.png" width="300"/> <img src="img/stations_marker.png" width="300"/>
-
+<p align="center">
+  <img src="img/networks_markers.png" width="300"/> <img src="img/stations_marker.png" width="300"/>
+</p>
 ## License
 
 Copyright 2017, MomoTheCat
@@ -58,6 +59,10 @@ Singleton, również w klasie AdapterView.
 
 ####Pobieranie danych z Internetu
 Dane pobierane są asynchronicznie z pomoca biblioteki Volley (klasa MapProcessorImpl), a następnie parsowane za pomocą Jackson’a (klasa JsonParser) na klasy znajdujące się w modelu. Jaskson nie wym,aga tworzenia konstruktorów ani posiadania setterów, dzięki temu klasy są małe i czytelne.
+
+<p align="center">
+  <img src="img/no_internet.png" width="300"/> <img src="img/navigation_drawer.png" width="300"/>
+</p>
 
 
 [1] https://www.theguardian.com/environment/2016/nov/23/uk-has-second-highest-number-of-deaths-from-no2-pollution-in-europe
