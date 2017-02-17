@@ -1,6 +1,6 @@
 ## Bike map
 
-Android application showing the nearest bike stations.
+Android application is showing the nearest bike stations.
 
 <p align="center">
   <img src="img/networks_markers.png" width="300"/> <img src="img/stations_marker.png" width="300"/>
