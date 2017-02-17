@@ -15,11 +15,11 @@ import com.google.android.gms.maps.model.Marker;
  * Created by szymon on 12.02.2017.
  */
 
-public class InfoWindows implements  GoogleMap.InfoWindowAdapter{
+public class InfoWindows implements GoogleMap.InfoWindowAdapter {
 
     Context context;
 
-    protected InfoWindows (Context context){
+    protected InfoWindows(Context context) {
         this.context = context;
     }
 
