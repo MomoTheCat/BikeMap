@@ -10,6 +10,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,11 +43,13 @@ public class DisableInternetTest {
             MainActivity.class);
 
     @Test
+    @Ignore("This test is ignored by default because it require to disable Internet connection")
     public void checkAlertDialogIsOpen() {
         onView(withText(R.string.cannot_connect_title)).check(matches(isDisplayed()));
     }
 
     @Test
+    @Ignore("This test is ignored by default because it require to disable Internet connection")
     public void checkAlertDialogRetry() {
         //(button1 - retry, button2 - settings):
         onView(withId(android.R.id.button1)).perform(click());

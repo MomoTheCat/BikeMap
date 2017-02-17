@@ -1,6 +1,6 @@
 ## Bike map
 
-Android application showing the nearest bike stations.
+Android application is showing the nearest bike stations.
 
 <p align="center">
   <img src="img/networks_markers.png" width="300"/> <img src="img/stations_marker.png" width="300"/>
@@ -58,7 +58,7 @@ Adapter, zaimplementoawany w klasie AdapterView.
 Singleton, również w klasie AdapterView.
 
 #### Testy
-W aplikacji znajdują się dwa typy testów. Pierwszy to testy jednostkowe w katalogu app/src/test Testy te są dosyć skromne, ale napisane zgodnie z ideą, że należy testować tylko jeden fragment kodu (np. metodę) a pozostała część powinna zostać zaślepiona. Do tego celu wykorzystano Mockito. Aplikacja dosyć szeroko korzysta z funkcji wbudowanych w system operacyjny, co znacznie utrudnia przygotowanie testów jednostkowych.
+W aplikacji znajdują się dwa typy testów. Pierwszy to testy jednostkowe w katalogu app/src/test Testy te są dosyć skromne, ale napisane zgodnie z ideą, że należy testować tylko jeden fragment kodu (np. metodę) a pozostała część powinna zostać zaślepiona. Do tego celu wykorzystano Mockito oraz Hamcrest. Aplikacja dosyć szeroko korzysta z funkcji wbudowanych w system operacyjny, co znacznie utrudnia przygotowanie testów jednostkowych.
 
 Aby utrzymać wysoki poziom jakości aplikacji przygotowano testy UI które znajdują się w katalogu app/src/androidTest
 
