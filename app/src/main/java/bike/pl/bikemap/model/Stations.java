@@ -47,56 +47,28 @@ public class Stations {
         return href;
     }
 
-    public void setHref(String href) {
-        this.href = href;
-    }
-
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public LicenseBean getLicense() {
         return license;
     }
 
-    public void setLicense(LicenseBean license) {
-        this.license = license;
-    }
-
     public LocationBean getLocation() {
         return location;
-    }
-
-    public void setLocation(LocationBean location) {
-        this.location = location;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public List<String> getCompany() {
         return company;
     }
 
-    public void setCompany(List<String> company) {
-        this.company = company;
-    }
-
     public List<StationsBean> getStations() {
         return stations;
-    }
-
-    public void setStations(List<StationsBean> stations) {
-        this.stations = stations;
     }
 
     public static class LicenseBean {
@@ -112,16 +84,8 @@ public class Stations {
             return name;
         }
 
-        public void setName(String name) {
-            this.name = name;
-        }
-
         public String getUrl() {
             return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
         }
     }
 
@@ -142,32 +106,16 @@ public class Stations {
             return city;
         }
 
-        public void setCity(String city) {
-            this.city = city;
-        }
-
         public String getCountry() {
             return country;
-        }
-
-        public void setCountry(String country) {
-            this.country = country;
         }
 
         public double getLatitude() {
             return latitude;
         }
 
-        public void setLatitude(double latitude) {
-            this.latitude = latitude;
-        }
-
         public double getLongitude() {
             return longitude;
-        }
-
-        public void setLongitude(double longitude) {
-            this.longitude = longitude;
         }
     }
 
@@ -196,64 +144,32 @@ public class Stations {
             return empty_slots;
         }
 
-        public void setEmpty_slots(int empty_slots) {
-            this.empty_slots = empty_slots;
-        }
-
         public ExtraBean getExtra() {
             return extra;
-        }
-
-        public void setExtra(ExtraBean extra) {
-            this.extra = extra;
         }
 
         public int getFree_bikes() {
             return free_bikes;
         }
 
-        public void setFree_bikes(int free_bikes) {
-            this.free_bikes = free_bikes;
-        }
-
         public String getId() {
             return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
         }
 
         public double getLatitude() {
             return latitude;
         }
 
-        public void setLatitude(double latitude) {
-            this.latitude = latitude;
-        }
-
         public double getLongitude() {
             return longitude;
-        }
-
-        public void setLongitude(double longitude) {
-            this.longitude = longitude;
         }
 
         public String getName() {
             return name;
         }
 
-        public void setName(String name) {
-            this.name = name;
-        }
-
         public String getTimestamp() {
             return timestamp;
-        }
-
-        public void setTimestamp(String timestamp) {
-            this.timestamp = timestamp;
         }
 
         public static class ExtraBean {
@@ -279,56 +195,28 @@ public class Stations {
                 return address;
             }
 
-            public void setAddress(String address) {
-                this.address = address;
-            }
-
             public boolean isBanking() {
                 return banking;
-            }
-
-            public void setBanking(boolean banking) {
-                this.banking = banking;
             }
 
             public boolean isBonus() {
                 return bonus;
             }
 
-            public void setBonus(boolean bonus) {
-                this.bonus = bonus;
-            }
-
             public long getLast_update() {
                 return last_update;
-            }
-
-            public void setLast_update(long last_update) {
-                this.last_update = last_update;
             }
 
             public int getSlots() {
                 return slots;
             }
 
-            public void setSlots(int slots) {
-                this.slots = slots;
-            }
-
             public String getStatus() {
                 return status;
             }
 
-            public void setStatus(String status) {
-                this.status = status;
-            }
-
             public int getUid() {
                 return uid;
-            }
-
-            public void setUid(int uid) {
-                this.uid = uid;
             }
         }
     }

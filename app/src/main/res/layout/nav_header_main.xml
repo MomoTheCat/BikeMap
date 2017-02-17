@@ -2,10 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:id="@+id/navigation_header_container"
         android:layout_width="match_parent"
         android:layout_height="@dimen/nav_header_height"
@@ -31,12 +30,32 @@
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             android:text="@string/app_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycle_view"
+    <LinearLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/navigation_header_container" />
+        android:layout_below="@+id/navigation_header_container"
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:src="@drawable/ic_refresh" />
+
+        <TextView
+            android:id="@+id/refresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/my"
+            android:padding="15dp"
+            android:paddingLeft="35dp"
+            android:text="@string/refresh"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </RelativeLayout>

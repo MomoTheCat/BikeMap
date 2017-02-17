@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import bike.pl.bikemap.model.Stations;
 import bike.pl.bikemap.network.MapProcessor;
+import bike.pl.bikemap.network.MapProcessorImpl;
 
 /**
  * Created by szymon on 15.02.2017.
@@ -35,8 +36,8 @@ public class AdapterView extends RecyclerView.Adapter<AdapterView.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        if (MapProcessor.stations != null & MapProcessor.stations.size() > 0) {
-            Stations.StationsBean sb = MapProcessor.stations.get(0).getStations().get(position);
+        if (MapProcessorImpl.stations != null & MapProcessorImpl.stations.size() > 0) {
+            Stations.StationsBean sb = MapProcessorImpl.stations.get(0).getStations().get(position);
             holder.stationName.setText(sb.getName());
             holder.bikesAvailability.setText("Bikes: " + sb.getFree_bikes()
                     + ",  slots: " + sb.getEmpty_slots());
@@ -45,8 +46,8 @@ public class AdapterView extends RecyclerView.Adapter<AdapterView.MyViewHolder> 
 
     @Override
     public int getItemCount() {
-        if (MapProcessor.stations != null & MapProcessor.stations.size() > 0)
-            return MapProcessor.stations.get(0).getStations().size();
+        if (MapProcessorImpl.stations != null & MapProcessorImpl.stations.size() > 0)
+            return MapProcessorImpl.stations.get(0).getStations().size();
         return 0;
     }
 

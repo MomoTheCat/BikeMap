@@ -15,4 +15,5 @@
     <string name="cannot_gps_title">Can\'t find your location</string>
     <string name="cannot_gps_message">This one\'s your fault, not ours. Check your GPS settings and retry.</string>
     <string name="stations">Stations</string>
+    <string name="refresh">Refresh map</string>
 </resources>

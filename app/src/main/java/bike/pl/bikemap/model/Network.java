@@ -81,7 +81,6 @@ public class Network {
         public double getLongitude() {
             return longitude;
         }
-
     }
 
     public static class LicenseBean {
@@ -100,6 +99,5 @@ public class Network {
         public String getUrl() {
             return url;
         }
-
     }
 }
