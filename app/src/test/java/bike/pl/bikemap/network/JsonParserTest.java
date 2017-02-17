@@ -133,7 +133,9 @@ public class JsonParserTest {
         Stations result = stations.get(0);
 
         //Assertions
-
+        assertThat(result.getName(),is("Nextbike GmbH"));
+        assertThat(result.getLocation().getCity(), is("Warszawa"));
+        assertThat(result.getLocation().getCountry(),is("PL"));
 
     }
 
