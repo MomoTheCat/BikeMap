@@ -57,6 +57,16 @@ Adapter, zaimplementoawany w klasie AdapterView.
 
 Singleton, również w klasie AdapterView.
 
+#### Testy
+W aplikacji znajdują się dwa typy testów. Pierwszy to testy jednostkowe w katalogu app/src/test Testy te są dosyć skromne, ale napisane zgodnie z ideą, że należy testować tylko jeden fragment kodu (np. metodę) a pozostała część powinna zostać zaślepiona. Do tego celu wykorzystano Mockito. Aplikacja dosyć szeroko korzysta z funkcji wbudowanych w system operacyjny, co znacznie utrudnia przygotowanie testów jednostkowych.
+
+Aby utrzymać wysoki poziom jakości aplikacji przygotowano testy UI które znajdują się w katalogu app/src/androidTest
+
+Raport z pokrycia kodu testami znajduje się w catalog coverageReport.
+
+#### Kompilacja
+Aby poprawnie skompilować aplikację należy w lokalnym pliku gradle.properties zmienną GOOGLE_MAPS_API_KEY której wartoś należy ustawić na klucz do Google Map API.
+
 ####Pobieranie danych z Internetu
 Dane pobierane są asynchronicznie z pomoca biblioteki Volley (klasa MapProcessorImpl), a następnie parsowane za pomocą Jackson’a (klasa JsonParser) na klasy znajdujące się w modelu. Jaskson nie wym,aga tworzenia konstruktorów ani posiadania setterów, dzięki temu klasy są małe i czytelne.
 
