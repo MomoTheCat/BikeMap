@@ -17,8 +17,12 @@ android {
         resValue "string", "google_maps_key",(project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
     }
     buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
         release {
             minifyEnabled false
+            testCoverageEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 

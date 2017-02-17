@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Stations.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">bike.pl.bikemap.model</a> &gt; <span class="el_source">Stations.java</span></div><h1>Stations.java</h1><pre class="source lang-java linenums">package bike.pl.bikemap.model;
+
+import java.util.List;
+
+/**
+ * Created by szymon on 12.02.2017.
+ */
+
+<span class="fc" id="L9">public class Stations {</span>
+    /**
+     * network : {&quot;company&quot;:[&quot;JCDecaux&quot;],
+     * &quot;href&quot;:&quot;/v2/networks/velib&quot;,
+     * &quot;id&quot;:&quot;velib&quot;,
+     * &quot;license&quot;:{&quot;name&quot;:&quot;Open Licence&quot;,
+     * &quot;url&quot;:&quot;https://developer.jcdecaux.com/#/opendata/licence&quot;},
+     * &quot;location&quot;:{&quot;city&quot;:&quot;Paris&quot;,
+     * &quot;country&quot;:&quot;FR&quot;,
+     * &quot;latitude&quot;:48.856614,
+     * &quot;longitude&quot;:2.3522219},
+     * &quot;name&quot;:&quot;Velib&quot;,
+     * &quot;stations&quot;:[{&quot;empty_slots&quot;:0,
+     * &quot;extra&quot;:{&quot;address&quot;:&quot;1 RUE BUFFON - 75005 PARIS&quot;,
+     * &quot;banking&quot;:true,
+     * &quot;bonus&quot;:false,
+     * &quot;last_update&quot;:1486858891000,
+     * &quot;slots&quot;:24,
+     * &quot;status&quot;:&quot;OPEN&quot;,
+     * &quot;uid&quot;:5035},
+     * &quot;free_bikes&quot;:24,
+     * &quot;id&quot;:&quot;02665e08554c92766bb82a8e8fe453f3&quot;,
+     * &quot;latitude&quot;:48.84315817822931,
+     * &quot;longitude&quot;:2.363748444641593,
+     * &quot;name&quot;:&quot;05035 - BUFFON AUSTERLITZ&quot;,
+     * &quot;timestamp&quot;:&quot;2017-02-12T00:24:35.939000Z&quot;},
+     * {&quot;empty_slots&quot;:0,
+     */
+
+    private String href;
+    private String id;
+    private LicenseBean license;
+    private LocationBean location;
+    private String name;
+    private List&lt;String&gt; company;
+    private List&lt;StationsBean&gt; stations;
+
+    public String getHref() {
+<span class="nc" id="L47">        return href;</span>
+    }
+
+    public String getId() {
+<span class="nc" id="L51">        return id;</span>
+    }
+
+    public LicenseBean getLicense() {
+<span class="nc" id="L55">        return license;</span>
+    }
+
+    public LocationBean getLocation() {
+<span class="nc" id="L59">        return location;</span>
+    }
+
+    public String getName() {
+<span class="nc" id="L63">        return name;</span>
+    }
+
+    public List&lt;String&gt; getCompany() {
+<span class="nc" id="L67">        return company;</span>
+    }
+
+    public List&lt;StationsBean&gt; getStations() {
+<span class="fc" id="L71">        return stations;</span>
+    }
+
+<span class="nc" id="L74">    public static class LicenseBean {</span>
+        /**
+         * name : Open Licence
+         * url : https://developer.jcdecaux.com/#/opendata/licence
+         */
+
+        private String name;
+        private String url;
+
+        public String getName() {
+<span class="nc" id="L84">            return name;</span>
+        }
+
+        public String getUrl() {
+<span class="nc" id="L88">            return url;</span>
+        }
+    }
+
+<span class="fc" id="L92">    public static class LocationBean {</span>
+        /**
+         * city : Paris
+         * country : FR
+         * latitude : 48.856614
+         * longitude : 2.3522219
+         */
+
+        private String city;
+        private String country;
+        private double latitude;
+        private double longitude;
+
+        public String getCity() {
+<span class="nc" id="L106">            return city;</span>
+        }
+
+        public String getCountry() {
+<span class="nc" id="L110">            return country;</span>
+        }
+
+        public double getLatitude() {
+<span class="nc" id="L114">            return latitude;</span>
+        }
+
+        public double getLongitude() {
+<span class="nc" id="L118">            return longitude;</span>
+        }
+    }
+
+<span class="fc" id="L122">    public static class StationsBean {</span>
+        /**
+         * empty_slots : 0
+         * extra : {&quot;address&quot;:&quot;1 RUE BUFFON - 75005 PARIS&quot;,&quot;banking&quot;:true,&quot;bonus&quot;:false,&quot;last_update&quot;:1486858891000,&quot;slots&quot;:24,&quot;status&quot;:&quot;OPEN&quot;,&quot;uid&quot;:5035}
+         * free_bikes : 24
+         * id : 02665e08554c92766bb82a8e8fe453f3
+         * latitude : 48.84315817822931
+         * longitude : 2.363748444641593
+         * name : 05035 - BUFFON AUSTERLITZ
+         * timestamp : 2017-02-12T00:24:35.939000Z
+         */
+
+        private int empty_slots;
+        private ExtraBean extra;
+        private int free_bikes;
+        private String id;
+        private double latitude;
+        private double longitude;
+        private String name;
+        private String timestamp;
+
+        public int getEmpty_slots() {
+<span class="fc" id="L144">            return empty_slots;</span>
+        }
+
+        public ExtraBean getExtra() {
+<span class="nc" id="L148">            return extra;</span>
+        }
+
+        public int getFree_bikes() {
+<span class="fc" id="L152">            return free_bikes;</span>
+        }
+
+        public String getId() {
+<span class="nc" id="L156">            return id;</span>
+        }
+
+        public double getLatitude() {
+<span class="fc" id="L160">            return latitude;</span>
+        }
+
+        public double getLongitude() {
+<span class="fc" id="L164">            return longitude;</span>
+        }
+
+        public String getName() {
+<span class="fc" id="L168">            return name;</span>
+        }
+
+        public String getTimestamp() {
+<span class="nc" id="L172">            return timestamp;</span>
+        }
+
+<span class="fc" id="L175">        public static class ExtraBean {</span>
+            /**
+             * address : 1 RUE BUFFON - 75005 PARIS
+             * banking : true
+             * bonus : false
+             * last_update : 1486858891000
+             * slots : 24
+             * status : OPEN
+             * uid : 5035
+             */
+
+            private String address;
+            private boolean banking;
+            private boolean bonus;
+            private long last_update;
+            private int slots;
+            private String status;
+            private int uid;
+
+            public String getAddress() {
+<span class="nc" id="L195">                return address;</span>
+            }
+
+            public boolean isBanking() {
+<span class="nc" id="L199">                return banking;</span>
+            }
+
+            public boolean isBonus() {
+<span class="nc" id="L203">                return bonus;</span>
+            }
+
+            public long getLast_update() {
+<span class="nc" id="L207">                return last_update;</span>
+            }
+
+            public int getSlots() {
+<span class="nc" id="L211">                return slots;</span>
+            }
+
+            public String getStatus() {
+<span class="nc" id="L215">                return status;</span>
+            }
+
+            public int getUid() {
+<span class="nc" id="L219">                return uid;</span>
+            }
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.2.3</div></body></html>

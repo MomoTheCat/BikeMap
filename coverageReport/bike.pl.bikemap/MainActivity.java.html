@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MainActivity.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">bike.pl.bikemap</a> &gt; <span class="el_source">MainActivity.java</span></div><h1>MainActivity.java</h1><pre class="source lang-java linenums">package bike.pl.bikemap;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.View;
+
+import android.widget.Toast;
+
+import bike.pl.bikemap.map.GMapFragment;
+import bike.pl.bikemap.network.MapProcessorImpl;
+
+import static bike.pl.bikemap.R.id.container;
+
+<span class="fc" id="L31">public class MainActivity extends AppCompatActivity {</span>
+
+<span class="fc" id="L33">    private final String FIRST_OPEN = &quot;firstOpen&quot;;</span>
+    public static final String MAP_FRAGMENT_NAME = &quot;MAP&quot;;
+
+<span class="fc" id="L36">    private final String TAG = this.getClass().getSimpleName();</span>
+<span class="fc" id="L37">    private boolean exit = false;</span>
+<span class="fc" id="L38">    private boolean firstOpen = true;</span>
+    private DrawerLayout drawer;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L43">        super.onCreate(savedInstanceState);</span>
+
+<span class="fc" id="L45">        setContentView(R.layout.activity_main);</span>
+<span class="fc" id="L46">        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);</span>
+<span class="fc" id="L47">        setSupportActionBar(toolbar);</span>
+
+<span class="fc" id="L49">        setupNavigationDrawer(toolbar, savedInstanceState);</span>
+<span class="fc" id="L50">        setRecyclerView();</span>
+
+<span class="fc" id="L52">        getFragmentManager().beginTransaction()</span>
+<span class="fc" id="L53">                .replace(container, new GMapFragment())</span>
+<span class="fc" id="L54">                .commit();</span>
+<span class="fc" id="L55">    }</span>
+
+    private void setupNavigationDrawer(Toolbar toolbar, Bundle savedInstanceState) {
+<span class="fc" id="L58">        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);</span>
+<span class="fc" id="L59">        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(</span>
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+<span class="fc" id="L61">        drawer.addDrawerListener(toggle);</span>
+
+<span class="fc" id="L63">        toggle.syncState();</span>
+<span class="fc" id="L64">    }</span>
+
+    @Override
+    protected void onResume() {
+<span class="fc" id="L68">        super.onResume();</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if (firstOpen) {</span>
+<span class="fc" id="L70">            drawer.openDrawer(Gravity.LEFT);</span>
+<span class="fc" id="L71">            firstOpen = false;</span>
+        }
+<span class="fc" id="L73">    }</span>
+
+    public void setRecyclerView() {
+<span class="fc" id="L76">        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);</span>
+
+<span class="fc" id="L78">        recyclerView.setAdapter(AdapterView.newInstance());</span>
+<span class="fc" id="L79">        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));</span>
+<span class="fc" id="L80">        recyclerView.setItemAnimator(new DefaultItemAnimator());</span>
+
+<span class="fc" id="L82">        findViewById(R.id.refresh_layout).setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L85">                getFragmentManager().beginTransaction()</span>
+<span class="fc" id="L86">                        .replace(container, new GMapFragment(), MAP_FRAGMENT_NAME)</span>
+<span class="fc" id="L87">                        .commit();</span>
+
+<span class="fc" id="L89">                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);</span>
+<span class="fc" id="L90">                drawer.closeDrawer(GravityCompat.START);</span>
+<span class="fc" id="L91">            }</span>
+        });
+<span class="fc" id="L93">    }</span>
+
+    @Override
+    protected void onStart() {
+<span class="fc" id="L97">        super.onStart();</span>
+<span class="fc" id="L98">        serverRequest();</span>
+<span class="fc" id="L99">    }</span>
+
+    private void serverRequest() {
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (isConnectingToInternet(getApplicationContext())) {</span>
+<span class="fc" id="L103">            MapProcessorImpl mapProcessor = new MapProcessorImpl(this);</span>
+<span class="fc" id="L104">            mapProcessor.prepareNetworkMap();</span>
+<span class="fc" id="L105">        } else {</span>
+<span class="nc" id="L106">            showNetworkDialog();</span>
+        }
+<span class="fc" id="L108">    }</span>
+
+    public static boolean isConnectingToInternet(Context context) {
+<span class="fc" id="L111">        ConnectivityManager cm = (ConnectivityManager)</span>
+<span class="fc" id="L112">                context.getSystemService(Context.CONNECTIVITY_SERVICE);</span>
+<span class="fc" id="L113">        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();</span>
+
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        return activeNetwork != null</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">                &amp;&amp; activeNetwork.isConnectedOrConnecting();</span>
+    }
+
+    private void showNetworkDialog() {
+<span class="nc" id="L120">        AlertDialog.Builder builder = new AlertDialog.Builder(this);</span>
+<span class="nc" id="L121">        builder.setTitle(R.string.cannot_connect_title)</span>
+<span class="nc" id="L122">                .setMessage(R.string.cannot_connect_message)</span>
+<span class="nc" id="L123">                .setCancelable(false)</span>
+<span class="nc" id="L124">                .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {</span>
+                    public void onClick(DialogInterface dialog, int id) {
+<span class="nc" id="L126">                        serverRequest();</span>
+<span class="nc" id="L127">                    }</span>
+                })
+<span class="nc" id="L129">                .setNegativeButton(R.string.settings, new DialogInterface.OnClickListener() {</span>
+                    public void onClick(DialogInterface dialog, int id) {
+<span class="nc" id="L131">                        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));</span>
+<span class="nc" id="L132">                    }</span>
+                });
+<span class="nc" id="L134">        AlertDialog alert = builder.create();</span>
+<span class="nc" id="L135">        alert.show();</span>
+<span class="nc" id="L136">    }</span>
+
+    @Override
+    protected void onStop() {
+<span class="fc" id="L140">        super.onStop();</span>
+<span class="fc" id="L141">    }</span>
+
+
+    @Override
+    public void onBackPressed() {
+<span class="nc" id="L146">        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (drawer.isDrawerOpen(GravityCompat.START)) {</span>
+<span class="nc" id="L148">            drawer.closeDrawer(GravityCompat.START);</span>
+        } else {
+<span class="nc" id="L150">            closeAfterDoubleClick();</span>
+        }
+<span class="nc" id="L152">    }</span>
+
+    private void closeAfterDoubleClick() {
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        if (exit) {</span>
+<span class="nc" id="L156">            super.onBackPressed();</span>
+        } else {
+<span class="nc" id="L158">            Toast.makeText(this, R.string.pressBackToExit, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L159">            exit = true;</span>
+<span class="nc" id="L160">            new Handler().postDelayed(new Runnable() {</span>
+                @Override
+                public void run() {
+<span class="nc" id="L163">                    exit = false;</span>
+<span class="nc" id="L164">                }</span>
+            }, 3000);
+        }
+<span class="nc" id="L167">    }</span>
+
+    @Override
+    protected void onSaveInstanceState(Bundle icicle) {
+<span class="nc" id="L171">        super.onSaveInstanceState(icicle);</span>
+<span class="nc" id="L172">        icicle.putBoolean(FIRST_OPEN, firstOpen);</span>
+<span class="nc" id="L173">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.2.3</div></body></html>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MapProcessorImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">bike.pl.bikemap.network</a> &gt; <span class="el_source">MapProcessorImpl.java</span></div><h1>MapProcessorImpl.java</h1><pre class="source lang-java linenums">package bike.pl.bikemap.network;
+
+import android.content.Context;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import bike.pl.bikemap.AdapterView;
+import bike.pl.bikemap.model.Network;
+import bike.pl.bikemap.model.Stations;
+
+import static bike.pl.bikemap.map.GMapFragment.updateMapWithNetworks;
+import static bike.pl.bikemap.map.GMapFragment.updateMapWithStations;
+
+/**
+ * Created by Kacper on 2017-01-22.
+ */
+public class MapProcessorImpl implements MapProcessor {
+
+<span class="fc" id="L28">    private final String TAG = this.getClass().getSimpleName();</span>
+    private Context context;
+
+<span class="fc" id="L31">    public MapProcessorImpl(Context context) {</span>
+<span class="fc" id="L32">        this.context = context;</span>
+<span class="fc" id="L33">    }</span>
+
+    public static final String JSON_URL = &quot;http://api.citybik.es&quot;;
+    public static final String JSON_URL_NETWORKS_LIST = &quot;/v2/networks&quot;;
+
+<span class="fc" id="L38">    public static List&lt;Network&gt; networks = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L39">    public static List&lt;Stations&gt; stations = new ArrayList&lt;&gt;();</span>
+
+    private void getNetworks() {
+<span class="fc" id="L42">        JsonObjectRequest stringRequest = new JsonObjectRequest(JSON_URL + JSON_URL_NETWORKS_LIST, null,</span>
+<span class="fc" id="L43">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="fc" id="L46">                        networks = JsonParser.parseNetwork(response);</span>
+<span class="fc" id="L47">                        updateMapWithNetworks(networks);</span>
+<span class="fc" id="L48">                    }</span>
+                },
+<span class="fc" id="L50">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L53">                        error.printStackTrace();</span>
+<span class="nc" id="L54">                    }</span>
+                });
+
+<span class="fc" id="L57">        RequestQueue requestQueue = Volley.newRequestQueue(context);</span>
+<span class="fc" id="L58">        requestQueue.add(stringRequest);</span>
+<span class="fc" id="L59">    }</span>
+
+    private void getStations(String company) {
+<span class="fc" id="L62">        JsonObjectRequest stringRequest = new JsonObjectRequest(JSON_URL + company, null,</span>
+<span class="fc" id="L63">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="fc" id="L66">                        stations = JsonParser.parseStations(response);</span>
+<span class="fc" id="L67">                        updateMapWithStations(stations);</span>
+
+<span class="fc" id="L69">                        AdapterView.newInstance().notifyDataSetChanged();</span>
+<span class="fc" id="L70">                    }</span>
+                },
+<span class="fc" id="L72">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L75">                        error.printStackTrace();</span>
+<span class="nc" id="L76">                    }</span>
+                });
+
+<span class="fc" id="L79">        RequestQueue requestQueue = Volley.newRequestQueue(context);</span>
+<span class="fc" id="L80">        requestQueue.add(stringRequest);</span>
+<span class="fc" id="L81">    }</span>
+
+    @Override
+    public void prepareNetworkMap() {
+<span class="fc" id="L85">        getNetworks();</span>
+<span class="fc" id="L86">    }</span>
+
+    @Override
+    public void prepareStationsMap(String url) {
+<span class="fc" id="L90">        getStations(url);</span>
+<span class="fc" id="L91">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.2.3</div></body></html>

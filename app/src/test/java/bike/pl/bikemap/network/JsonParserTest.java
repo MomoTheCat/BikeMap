@@ -105,6 +105,8 @@ public class JsonParserTest {
     JSONObject mockJSONObject;
     @Mock
     JSONArray mockJsonArray;
+    @Mock
+    JSONObject mockJSONObjectStations;
 
     @Test
     public void parseNetwork() throws Exception {
@@ -127,14 +129,15 @@ public class JsonParserTest {
 
     @Test
     public void parseStations() throws Exception {
-        when(mockJSONObject.getJSONObject("network")).thenReturn(mockJSONObject);
-        when(mockJSONObject.toString()).thenReturn(STATIONS);
+        when(mockJSONObject.getJSONObject("network")).thenReturn(mockJSONObjectStations);
+        when(mockJSONObjectStations.toString()).thenReturn(NETWORKS);
+        String test = mockJSONObjectStations.toString();
         List<Stations> stations = JsonParser.parseStations(mockJSONObject);
         Stations result = stations.get(0);
 
         //Assertions
-        assertThat(result.getName(),is("Nextbike GmbH"));
-        assertThat(result.getLocation().getCity(), is("Warszawa"));
+        assertThat(result.getName(),is("Opole Bike"));
+        assertThat(result.getLocation().getCity(), is("Opole"));
         assertThat(result.getLocation().getCountry(),is("PL"));
 
     }

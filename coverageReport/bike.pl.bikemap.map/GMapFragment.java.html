@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GMapFragment.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">bike.pl.bikemap.map</a> &gt; <span class="el_source">GMapFragment.java</span></div><h1>GMapFragment.java</h1><pre class="source lang-java linenums">package bike.pl.bikemap.map;
+
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import bike.pl.bikemap.R;
+import bike.pl.bikemap.model.Network;
+import bike.pl.bikemap.model.Stations;
+import bike.pl.bikemap.network.MapProcessor;
+import bike.pl.bikemap.network.MapProcessorImpl;
+
+/**
+ * Created by szymon on 19.01.2017.
+ */
+
+<span class="fc" id="L51">public class GMapFragment extends Fragment implements</span>
+        OnMapReadyCallback,
+        ActivityCompat.OnRequestPermissionsResultCallback,
+        GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+
+    private static GoogleMap mMap;
+<span class="fc" id="L57">    private final int MY_LOCATION_REQUEST_CODE = 90;</span>
+
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+<span class="fc" id="L65">        return inflater.inflate(R.layout.fragment_maps, container, false);</span>
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+<span class="fc" id="L70">        super.onViewCreated(view, savedInstanceState);</span>
+<span class="fc" id="L71">        ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);</span>
+
+<span class="fc" id="L73">        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())</span>
+<span class="fc" id="L74">                .addApi(LocationServices.API)</span>
+<span class="fc" id="L75">                .addOnConnectionFailedListener(this)</span>
+<span class="fc" id="L76">                .addConnectionCallbacks(this)</span>
+<span class="fc" id="L77">                .build();</span>
+<span class="fc" id="L78">    }</span>
+
+    @Override
+    public void onStart() {
+<span class="fc" id="L82">        super.onStart();</span>
+<span class="fc" id="L83">        mGoogleApiClient.connect();</span>
+<span class="fc" id="L84">    }</span>
+
+    @Override
+    public void onStop() {
+<span class="fc" id="L88">        super.onStop();</span>
+<span class="fc" id="L89">        mGoogleApiClient.disconnect();</span>
+<span class="fc" id="L90">    }</span>
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+<span class="fc" id="L94">        mMap = googleMap;</span>
+<span class="fc" id="L95">        requestLocation();</span>
+<span class="fc" id="L96">        mMap.setInfoWindowAdapter(new InfoWindows(getActivity()));</span>
+<span class="fc" id="L97">    }</span>
+
+
+    public void requestLocation() {
+<span class="fc" id="L101">        Log.d(&quot;Szymon&quot;, &quot;requestLocation&quot;);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)</span>
+                == PackageManager.PERMISSION_GRANTED) {
+<span class="fc" id="L104">            mMap.setMyLocationEnabled(true);</span>
+        } else {
+<span class="nc" id="L106">            requestPermission();</span>
+        }
+<span class="fc" id="L108">    }</span>
+
+    private void requestPermission() {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.M) {</span>
+<span class="nc" id="L112">            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},</span>
+                    MY_LOCATION_REQUEST_CODE);
+        }
+<span class="nc" id="L115">    }</span>
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        switch (requestCode) {</span>
+            case MY_LOCATION_REQUEST_CODE:
+<span class="nc bnc" id="L121" title="All 4 branches missed.">                if (permissions.length &gt; 0 &amp;&amp; grantResults[0] == PackageManager.PERMISSION_GRANTED) {</span>
+                    try {
+<span class="nc" id="L123">                        mMap.setMyLocationEnabled(true);</span>
+<span class="nc" id="L124">                        updateView();</span>
+<span class="nc" id="L125">                        obtainLocation();</span>
+<span class="nc" id="L126">                    } catch (SecurityException e) {</span>
+<span class="nc" id="L127">                        e.getMessage();</span>
+<span class="nc" id="L128">                    }</span>
+                } else {
+<span class="nc" id="L130">                    Toast.makeText(getActivity(), R.string.location_denied, Toast.LENGTH_LONG).show();</span>
+                }
+<span class="nc" id="L132">                return;</span>
+        }
+<span class="nc" id="L134">    }</span>
+
+    public void showLocationDialog() {
+<span class="nc" id="L137">        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());</span>
+<span class="nc" id="L138">        builder.setTitle(R.string.cannot_gps_title)</span>
+<span class="nc" id="L139">                .setMessage(R.string.cannot_gps_message)</span>
+<span class="nc" id="L140">                .setCancelable(false)</span>
+<span class="nc" id="L141">                .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {</span>
+                    public void onClick(DialogInterface dialog, int id) {
+<span class="nc" id="L143">                        obtainLocation();</span>
+<span class="nc" id="L144">                    }</span>
+                })
+<span class="nc" id="L146">                .setNegativeButton(R.string.settings, new DialogInterface.OnClickListener() {</span>
+                    public void onClick(DialogInterface dialog, int id) {
+<span class="nc" id="L148">                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));</span>
+<span class="nc" id="L149">                    }</span>
+                });
+<span class="nc" id="L151">        AlertDialog alert = builder.create();</span>
+<span class="nc" id="L152">        alert.show();</span>
+<span class="nc" id="L153">    }</span>
+
+    public void obtainLocation() {
+<span class="fc" id="L156">        Log.d(&quot;Szymon&quot;, &quot;obtainLocation&quot;);</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (!isLocationEnabled(getActivity()))</span>
+<span class="nc" id="L158">            showLocationDialog();</span>
+
+<span class="fc" id="L160">        String href = checkNearestStations(MapProcessorImpl.networks);</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if (!(&quot;&quot;.equals(href))) {</span>
+<span class="fc" id="L162">            new MapProcessorImpl(getActivity()).prepareStationsMap(href);</span>
+        }
+<span class="fc" id="L164">    }</span>
+
+    public static boolean isLocationEnabled(Context context) {
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">        if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.KITKAT) {</span>
+            int locationMode;
+            try {
+<span class="fc" id="L170">                locationMode = Settings.Secure.getInt(context.getContentResolver(),</span>
+                        Settings.Secure.LOCATION_MODE);
+<span class="nc" id="L172">            } catch (Settings.SettingNotFoundException e) {</span>
+<span class="nc" id="L173">                e.printStackTrace();</span>
+<span class="nc" id="L174">                return false;</span>
+<span class="fc" id="L175">            }</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">            return locationMode != Settings.Secure.LOCATION_MODE_OFF;</span>
+
+        } else {
+<span class="nc" id="L179">            String locationProviders = Settings.Secure.getString(context.getContentResolver(),</span>
+                    Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+<span class="nc bnc" id="L182" title="All 2 branches missed.">            return !TextUtils.isEmpty(locationProviders);</span>
+        }
+    }
+
+    public static void updateMapWithStations(List&lt;Stations&gt; stations) {
+<span class="pc bpc" id="L187" title="2 of 4 branches missed.">        if (stations != null &amp;&amp; stations.size() &gt; 0) {</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            for (Stations.StationsBean station : stations.get(0).getStations()) {</span>
+<span class="fc" id="L189">                mMap.addMarker(new MarkerOptions()</span>
+<span class="fc" id="L190">                        .position(new LatLng(station.getLatitude(), station.getLongitude()))</span>
+<span class="fc" id="L191">                        .title(station.getName())</span>
+<span class="fc" id="L192">                        .snippet(&quot;Free bikes: &quot; + station.getFree_bikes() +</span>
+<span class="fc" id="L193">                                &quot;\nFree slots: &quot; + station.getEmpty_slots()));</span>
+<span class="fc" id="L194">            }</span>
+        }
+<span class="fc" id="L196">    }</span>
+
+    protected String checkNearestStations(List&lt;Network&gt; nets) {
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">        if (mLastLocation == null) Log.d(&quot;Szymon&quot;, &quot;Location is  null&quot;);</span>
+
+<span class="pc bpc" id="L201" title="2 of 4 branches missed.">        if (mLastLocation != null &amp;&amp; nets != null) {</span>
+<span class="fc" id="L202">            float[] results = new float[nets.size()];</span>
+<span class="fc" id="L203">            List&lt;Float&gt; distance = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            for (Network net : nets) {</span>
+<span class="fc" id="L206">                Location.distanceBetween(</span>
+<span class="fc" id="L207">                        mLastLocation.getLatitude(),</span>
+<span class="fc" id="L208">                        mLastLocation.getLongitude(),</span>
+<span class="fc" id="L209">                        net.getLocation().getLatitude(),</span>
+<span class="fc" id="L210">                        net.getLocation().getLongitude(),</span>
+                        results);
+<span class="fc" id="L212">                distance.add(results[0]);</span>
+<span class="fc" id="L213">            }</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">            if (distance.size() &gt; 0) {</span>
+<span class="fc" id="L215">                int index = distance.indexOf(Collections.min(distance));</span>
+<span class="fc" id="L216">                return nets.get(index).getHref();</span>
+            }
+        }
+<span class="fc" id="L219">        return &quot;&quot;;</span>
+    }
+
+    public void updateView() {
+<span class="pc bpc" id="L223" title="3 of 6 branches missed.">        if (mLastLocation != null &amp; mMap != null) {</span>
+<span class="fc" id="L224">            LatLng latLng = new LatLng(mLastLocation.getLatitude(),</span>
+<span class="fc" id="L225">                    mLastLocation.getLongitude());</span>
+<span class="fc" id="L226">            CameraPosition cameraPosition = new CameraPosition.Builder()</span>
+<span class="fc" id="L227">                    .target(latLng)</span>
+<span class="fc" id="L228">                    .zoom(16)</span>
+<span class="fc" id="L229">                    .build();</span>
+<span class="fc" id="L230">            mMap.animateCamera(CameraUpdateFactory</span>
+<span class="fc" id="L231">                    .newCameraPosition(cameraPosition));</span>
+        }
+<span class="fc" id="L233">    }</span>
+
+    public static void updateMapWithNetworks(List&lt;Network&gt; nets) {
+<span class="fc bfc" id="L236" title="All 2 branches covered.">        for (Network net : nets) {</span>
+<span class="fc" id="L237">            mMap.addMarker(new MarkerOptions()</span>
+<span class="fc" id="L238">                    .position(new LatLng(net.getLocation().getLatitude(), net.getLocation().getLongitude()))</span>
+<span class="fc" id="L239">                    .title(net.getName())</span>
+<span class="fc" id="L240">                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));</span>
+<span class="fc" id="L241">        }</span>
+<span class="fc" id="L242">    }</span>
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)</span>
+                != PackageManager.PERMISSION_GRANTED) {
+<span class="nc" id="L248">            return;</span>
+        }
+<span class="fc" id="L250">        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);</span>
+<span class="fc" id="L251">        updateView();</span>
+<span class="fc" id="L252">        obtainLocation();</span>
+<span class="fc" id="L253">    }</span>
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+<span class="nc" id="L257">        Log.d(&quot;Szymon&quot;, &quot;onConnectionFailed:&quot; + connectionResult.getErrorCode() + &quot;,&quot; + connectionResult.getErrorMessage());</span>
+<span class="nc" id="L258">    }</span>
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+<span class="nc" id="L263">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.2.3</div></body></html>
