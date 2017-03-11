@@ -63,6 +63,7 @@ public class MainActivityTest {
         onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
     }
 
+
 //    @Test
 //    public void clickBackButtonOnce() {
 //        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
