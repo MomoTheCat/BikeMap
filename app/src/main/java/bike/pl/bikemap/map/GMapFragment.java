@@ -41,7 +41,6 @@ import java.util.List;
 import bike.pl.bikemap.R;
 import bike.pl.bikemap.model.Network;
 import bike.pl.bikemap.model.Stations;
-import bike.pl.bikemap.network.MapProcessor;
 import bike.pl.bikemap.network.MapProcessorImpl;
 
 /**
@@ -52,6 +51,8 @@ public class GMapFragment extends Fragment implements
         OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+
+    private static final String TAG = "GMapFragment";
 
     private static GoogleMap mMap;
     private final int MY_LOCATION_REQUEST_CODE = 90;
@@ -124,7 +125,8 @@ public class GMapFragment extends Fragment implements
                         updateView();
                         obtainLocation();
                     } catch (SecurityException e) {
-                        e.getMessage();
+                        Log.d(TAG, "Set location button" + e.getMessage());
+                        Log.getStackTraceString(e);
                     }
                 } else {
                     Toast.makeText(getActivity(), R.string.location_denied, Toast.LENGTH_LONG).show();
@@ -170,7 +172,8 @@ public class GMapFragment extends Fragment implements
                 locationMode = Settings.Secure.getInt(context.getContentResolver(),
                         Settings.Secure.LOCATION_MODE);
             } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
+                Log.d(TAG, "Set location button" + e.getMessage());
+                Log.getStackTraceString(e);
                 return false;
             }
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
@@ -184,7 +187,7 @@ public class GMapFragment extends Fragment implements
     }
 
     public static void updateMapWithStations(List<Stations> stations) {
-        if (stations != null && stations.size() > 0) {
+        if (stations != null && !stations.isEmpty()) {
             for (Stations.StationsBean station : stations.get(0).getStations()) {
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(station.getLatitude(), station.getLongitude()))
@@ -211,7 +214,7 @@ public class GMapFragment extends Fragment implements
                         results);
                 distance.add(results[0]);
             }
-            if (distance.size() > 0) {
+            if (!distance.isEmpty()) {
                 int index = distance.indexOf(Collections.min(distance));
                 return nets.get(index).getHref();
             }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bike.pl.bikemap.AdapterView;
+import bike.pl.bikemap.aspects.LogAspect;
 import bike.pl.bikemap.model.Network;
 import bike.pl.bikemap.model.Stations;
 
@@ -38,6 +39,7 @@ public class MapProcessorImpl implements MapProcessor {
     public static List<Network> networks = new ArrayList<>();
     public static List<Stations> stations = new ArrayList<>();
 
+    @LogAspect
     private void getNetworks() {
         JsonObjectRequest stringRequest = new JsonObjectRequest(JSON_URL + JSON_URL_NETWORKS_LIST, null,
                 new Response.Listener<JSONObject>() {
