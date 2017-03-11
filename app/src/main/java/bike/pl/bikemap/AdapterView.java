@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import bike.pl.bikemap.model.Stations;
-import bike.pl.bikemap.network.MapProcessor;
 import bike.pl.bikemap.network.MapProcessorImpl;
 
 /**

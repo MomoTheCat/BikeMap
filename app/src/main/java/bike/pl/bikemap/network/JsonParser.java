@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.util.Arrays;
 import java.util.List;
 
+import bike.pl.bikemap.aspects.LogAspect;
 import bike.pl.bikemap.model.Network;
 import bike.pl.bikemap.model.Stations;
 
@@ -26,6 +27,7 @@ public class JsonParser {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
+    @LogAspect
     public static List<Network> parseNetwork(JSONObject json) {
         List<Network> networks = null;
         try {
@@ -37,6 +39,7 @@ public class JsonParser {
         return networks;
     }
 
+    @LogAspect
     public static List<Stations> parseStations(JSONObject json) {
         List<Stations> stations = null;
         try {

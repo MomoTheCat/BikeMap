@@ -6,7 +6,7 @@
 
     <string name="action_settings">Settings</string>
     <string name="location_denied">We can\'t use your location, but we need it to show you bike stations</string>
-    <string name="pressBackToExit">Press Back again to Exit.</string>
+    <string name="press_back_exit">Press Back again to Exit.</string>
     <string name="cannot_connect_title">Cannot connect to the Internet</string>
     <string name="cannot_connect_message">This one\'s your fault, not ours. Check your network settings and retry.</string>
     <string name="retry">Retry</string>
