@@ -1,4 +1,5 @@
 ## Bike map
+![Build Status](https://travis-ci.org/MomoTheCat/BikeMap.svg?branch=master)
 
 Android application is showing the nearest bike stations.
 
